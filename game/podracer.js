@@ -1,3 +1,4 @@
+	// Here we define some controls to interact with the animation ...
 	var controls = new function() {
 			this.camera = 0;
 	}
@@ -6,17 +7,20 @@
 	gui.add(controls, 'camera', [0,1,2,3]);
 	console.dir([controls, controls.rotationX, controls.rotationZ]);
 
-
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
-	var planeMesh; // we have 4 mesh objects
-	var podRacer;
+	var planeMesh, podRacer;
 	var light1,light2;  // we have two lights
 
 	init(); // initialize these 9 variables
 	animate();  // start the animation loop!
 
+
+
+	/**
+	  To initialize the scene, we initialize each of its components
+	*/
 	function init(){
 			initScene();
 			initPlaneMesh();
@@ -27,7 +31,7 @@
 			initCamera();
 	}
 
-	/* Initalizes Scene and Renderer
+	/* Initializes Scene and Renderer
 	*/
 	function initScene(){
 		scene = new THREE.Scene();
@@ -59,6 +63,7 @@
 	}
 
 	function initPlaneMesh(){
+		// creating a textured plane which receives shadow
 		var planeGeometry = new THREE.PlaneGeometry( 20, 20, 128 );
 		var planeMaterial = new THREE.MeshLambertMaterial( { color: 0xaaaaaa} );
 		planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
