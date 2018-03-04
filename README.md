@@ -7,5 +7,4 @@ To-do list:
 - Implement boost feature for vehicle (Threejs)
 - Create background objects (Blender)
 - Create HUD [Speed, Boost Cooldown, Current Time, Laps Completed/Laps Left] (HTML5) 
-- Add texture map to vehicle (ThreeJS)
 - Implement Sounds (Optional)
