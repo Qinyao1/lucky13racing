@@ -1,14 +1,3 @@
-
-/*
- This is our final version of the initial animation demo.
- We use javascript functions to simplify the code a bit
-
-*/
-
-
-	console.log("In demo4!");
-
-	// here we define some controls to interact with the animation ...
 	var controls = new function() {
 			this.camera = 0;
 	}
@@ -21,39 +10,27 @@
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
-	var textMesh, cubeMesh, coneMesh, planeMesh; // we have 4 mesh objects
+	var planeMesh; // we have 4 mesh objects
 	var podRacer;
 	var light1,light2;  // we have two lights
 
 	init(); // initialize these 9 variables
 	animate();  // start the animation loop!
 
-	/**
-	  To initialize the scene, we initialize each of its components
-	*/
 	function init(){
 			initScene();
-			initRenderer();
 			initPlaneMesh();
-			initSuzanne();
+			initPodRacer();
 
 			initLight1();
 			initLight2();
 			initCamera();
 	}
 
-	/* We don't do much here, but we could do more!
+	/* Initalizes Scene and Renderer
 	*/
 	function initScene(){
 		scene = new THREE.Scene();
-	}
-
-	/*
-		The renderer needs a size and the actual canvas we draw on
-		needs to be added to the body of the webpage. We also specify
-		that the renderer will be computing soft shadows
-	*/
-	function initRenderer(){
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
@@ -71,27 +48,22 @@
 		camera.lookAt(0,0,0);
 	}
 
-	function initSuzanne(){
+	function initPodRacer(){
 		var loader = new THREE.BufferGeometryLoader();
+		var texture = new THREE.TextureLoader().load( '../textures/b2.png' );
 		loader.load("../models/podracer.json",
 					function ( geometry, materials ) {
-						var material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+						var material = new THREE.MeshPhongMaterial({color:0xffffff, map:texture});
 						podRacer = new THREE.Mesh( geometry, material );
 						scene.add( podRacer )});
 	}
 
 	function initPlaneMesh(){
-		// creating a textured plane which receives shadows
 		var planeGeometry = new THREE.PlaneGeometry( 20, 20, 128 );
-		var texture = new THREE.TextureLoader().load( '../images/dogs.jpg' );
-		texture.wrapS = THREE.RepeatWrapping;
-		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.set( 4, 4 );
-		var planeMaterial = new THREE.MeshLambertMaterial( { color: 0xaaaaaa,  map: texture ,side:THREE.DoubleSide} );
+		var planeMaterial = new THREE.MeshLambertMaterial( { color: 0xaaaaaa} );
 		planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
 		planeMesh.position.y = -2;
 		scene.add(planeMesh);
-		// we need to rotate the mesh 90 degrees to make it horizontal not vertical
 		planeMesh.rotation.x = -Math.PI/2;
 		planeMesh.receiveShadow = true;
 	}
