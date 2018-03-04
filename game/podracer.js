@@ -10,7 +10,7 @@
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
-	var planeMesh, podRacer;
+	var planeMesh, podRacer, testTrack;
 	var light1,light2;  // we have two lights
 
 	init(); // initialize these 9 variables
@@ -25,6 +25,7 @@
 			initScene();
 			initPlaneMesh();
 			initPodRacer();
+			initTestTrack();
 
 			initLight1();
 			initLight2();
@@ -49,7 +50,6 @@
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		camera.position.z = 20;
 		camera.position.y=4;
-		camera.lookAt(0,0,0);
 	}
 
 	function initPodRacer(){
@@ -60,6 +60,16 @@
 						var material = new THREE.MeshPhongMaterial({color:0xffffff, map:texture});
 						podRacer = new THREE.Mesh( geometry, material );
 						scene.add( podRacer )});
+	}
+
+	function initTestTrack(){
+		var loader = new THREE.BufferGeometryLoader();
+		loader.load("../models/FullTestTrack.json",
+					function ( geometry, materials ) {
+						var material = new THREE.MeshPhongMaterial({color:0xffff00});
+						testTrack = new THREE.Mesh( geometry, material );
+						testTrack.scale.set(50,50,50);
+						scene.add( testTrack )});
 	}
 
 	function initPlaneMesh(){
@@ -108,6 +118,9 @@
 	function animate() {
 		requestAnimationFrame( animate );
 		var currentTime = (new Date()).getTime();
+		if(podRacer != null){
+			camera.lookAt(podRacer.position);
+		}
 
 
 		angle += controls.camRotation;
