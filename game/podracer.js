@@ -2,129 +2,82 @@
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
 	var planeMesh, podRacer, testTrack;
-	var light1,light2;  // we have two lights
-	var avatar, avatarCam;
+	var light;
+	var forward;
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
 				speed:10,
 		    camera:camera}
 
-	var gameState =
-				     {score:0, health:10, scene:'main', camera:'none' }
+	init();
 
-	init(); // initialize these 9 variables
-	animate();  // start the animation loop!
-
-
-
-
-	/**
-	  To initialize the scene, we initialize each of its components
-	*/
 	function init(){
-			initScene();
+			initGame();
 			initPlaneMesh();
-			initTestTrack();
-			initControls();
-			initLight1();
-			initLight2();
-			initCamera();
 			initPodRacer();
+			initGridHelper();
+			initControls();
 	}
 
-	function initPhysijs(){
-	    Physijs.scripts.worker = '../js/physijs_worker.js';
-	    Physijs.scripts.ammo = '../js/ammo.js';
-	  }
+	function initGridHelper(){
+		var size = 10000;
+		var divisions = 10000;
+		var gridHelper = new THREE.GridHelper( size, divisions );
+		scene.add( gridHelper );
+	}
 
-	/* Initializes Scene and Renderer
-	*/
-	function initScene(){
+	function initGame(){
+		//Initializes scene
 		scene = new Physijs.Scene();
+
+		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-		initPhysijs();
-	}
 
-	/*
-		We use a perspective camera raised 4 units and set back 20, looking at (0,0,0)
-	*/
-	function initCamera(){
+		//Initializes Physijs scripts
+		Physijs.scripts.worker = '/js/physijs_worker.js';
+		Physijs.scripts.ammo = '/js/ammo.js';
+
+		//Initializes light
+		light = new THREE.AmbientLight( 0x404040, 5 );
+		scene.add( light );
+
+		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		camera.position.set(0,4,0);
-		camera.lookAt(0,4,10);
+		camera.position.set(0,7,-15);
+		camera.lookAt(0,0,10);
+
 	}
 
 	function initPodRacer(){
-		var loader = new THREE.BufferGeometryLoader();
+		var loader = new THREE.JSONLoader();
 		var texture = new THREE.TextureLoader().load( '../textures/b2.png' );
-		loader.load("../models/podracer.json",
+		loader.load("../models/racer.json",
 					function ( geometry, materials ) {
-						material = new THREE.MeshPhongMaterial({color:0xffffff, map:texture});
-						pmaterial = new Physijs.createMaterial(material,0.9,0.5);
-						podRacer = new Physijs.BoxMesh( geometry, pmaterial, 0 );
-						avatar = podRacer;
-						camera.position.set(0,6,-13);
-						camera.lookAt(0,4,10);
+						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
+						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+						podRacer = new Physijs.BoxMesh(geometry, pmaterial);
 						podRacer.add(camera);
 						scene.add(podRacer);
+						scene.add(planeMesh);
+						animate();
 						});
-	}
-
-	function initTestTrack(){
-		var loader = new THREE.BufferGeometryLoader();
-		loader.load("../models/FullTestTrack.json",
-					function ( geometry, materials ) {
-						var material = new THREE.MeshPhongMaterial({color:0xffff00});
-						var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
-						testTrack = new Physijs.BoxMesh( geometry, material, 0);
-						testTrack.scale.set(50,50,50);
-						scene.add( testTrack )});
 	}
 
 	function initPlaneMesh(){
 		// creating a textured plane which receives shadow
-		var planeGeometry = new THREE.PlaneGeometry( 20, 20, 128 );
-		var planeMaterial = new THREE.MeshLambertMaterial( { color: 0xaaaaaa} );
-		planeMesh = new THREE.Mesh( planeGeometry, planeMaterial );
+		var geometry = new THREE.PlaneGeometry( 20000, 20000, 128 );
+		var pmaterial = new Physijs.createMaterial(
+				new THREE.MeshLambertMaterial(), 0.5, 0.5);
+		planeMesh = new Physijs.BoxMesh( geometry, pmaterial, 0 );
 		planeMesh.position.y = -2;
-		scene.add(planeMesh);
 		planeMesh.rotation.x = -Math.PI/2;
 		planeMesh.receiveShadow = true;
 	}
-
-
-	function initLight1(){
-		light1 = new THREE.SpotLight( 0xaaaaff );
-		light1.position.set( 0, 10, 0 );
-		light1.castShadow = true;
-		//Set up shadow properties for the light
-		light1.shadow.mapSize.width = 2048;  // default
-		light1.shadow.mapSize.height = 2048; // default
-		light1.shadow.camera.near = 0.5;       // default
-		light1.shadow.camera.far = 500      // default
-		// add it to the scenes
-		scene.add( light1 );
-	}
-
-
-	function initLight2(){
-		var light2 = new THREE.SpotLight( 0xffaaaa );
-		light2.position.set( -100, 100, 100 );
-		light2.castShadow = true;
-		//Set up shadow properties for the light
-		light2.shadow.mapSize.width = 2048;  // default
-		light2.shadow.mapSize.height = 2048; // default
-		light2.shadow.camera.near = 0.5;       // default
-		light2.shadow.camera.far = 500      // default
-		// add it to the scene
-		scene.add( light2 );
-	}
-
 
 	var clock;
 
@@ -140,9 +93,8 @@
 	  }
 
 		function keydown(event){
-			console.log("Keydown:"+event.key);
-			console.dir(event);
-			// first we handle the "play again" key in the "youwon" scene
+			//console.log("Keydown:"+event.key);
+			//console.dir(event);
 			// this is the regular scene
 			switch (event.key){
 				// change the way the avatar is moving
@@ -155,8 +107,8 @@
 				case "m": controls.speed = 30; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,4,-6);; break;
-				case "2": camera.position.set(0,4,-6);; break;
+				case "1": camera.position.set(0,7,-15); break;
+				case "2": camera.position.set(0,4,-6); break;
 
 				// move the camera around, relative to the avatar
 				case "ArrowLeft": camera.translateY(1);break;
@@ -178,23 +130,21 @@
 				case "d": controls.right = false; break;
 				case "r": controls.up    = false; break;
 				case "f": controls.down  = false; break;
-				case "m": controls.speed = 10; break;
+				case "m": controls.speed = 100; break;
 			}
 		}
-
-
 
 	  function updateAvatar(){
 			"change the avatar's linear or angular velocity based on controls state (set by WSAD key presses)"
 
-			var forward = avatar.getWorldDirection();
+			var forward = podRacer.getWorldDirection(forward);
 
 			if (controls.fwd){
 				podRacer.setLinearVelocity(forward.multiplyScalar(controls.speed));
 			} else if (controls.bwd){
 				podRacer.setLinearVelocity(forward.multiplyScalar(-controls.speed));
 			} else {
-				var velocity = avatar.getLinearVelocity();
+				var velocity = podRacer.getLinearVelocity();
 				velocity.x=velocity.z=0;
 				podRacer.setLinearVelocity(velocity); //stop the xz motion
 			}
@@ -203,28 +153,15 @@
 				podRacer.setAngularVelocity(new THREE.Vector3(0,controls.speed*0.1,0));
 			} else if (controls.right){
 				podRacer.setAngularVelocity(new THREE.Vector3(0,-controls.speed*0.1,0));
+			} else {
+				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
 
 		}
 
-  var angle = 0;
-
 	function animate() {
 		requestAnimationFrame( animate );
-
-						updateAvatar();
-			    	scene.simulate();
-						if (gameState.camera!= 'none'){
-							renderer.render( scene, gameState.camera );
-						}
-
-		angle += controls.camRotation;
-		switch (controls.camera){
-			case '0': revolveCamera(angle); break;
-			case '1': setCameraAngle1(); break;
-			case '2': setCameraAngle2(); break;
-			case '3': setCameraAngle3(); break;
-		}
-
+		updateAvatar();
+		scene.simulate();
 		renderer.render( scene, camera );
 	}
