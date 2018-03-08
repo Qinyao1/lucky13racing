@@ -31,6 +31,16 @@
 		//Initializes scene
 		scene = new Physijs.Scene();
 
+		//Initializes skybox
+		var geometry = new THREE.SphereGeometry( 1000, 1000, 80 );
+		var texture = new THREE.TextureLoader().load( '/textures/space.PNG' );
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat.set( 10, 10 );
+		var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture, side:THREE.DoubleSide } );
+		var mesh = new THREE.Mesh( geometry, material, 0 );
+		scene.add( mesh );
+
 		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight );
