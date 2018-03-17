@@ -7,6 +7,7 @@
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
+				 hardLeft:false, hardRight:false,
 				speed:10,
 		    camera:camera}
 
@@ -103,7 +104,7 @@
 	  }
 
 		function keydown(event){
-			//console.log("Keydown:"+event.key);
+			console.log("Keydown:"+event.key);
 			//console.dir(event);
 			// this is the regular scene
 			switch (event.key){
@@ -114,17 +115,14 @@
 				case "d": controls.right = true; break;
 				case "r": controls.up = true; break;
 				case "f": controls.down = true; break;
-				case "m": controls.speed = 30; break;
 
 				// switch cameras
 				case "1": camera.position.set(0,7,-15); break;
 				case "2": camera.position.set(0,4,-6); break;
 
-				// move the camera around, relative to the avatar
-				case "ArrowLeft": camera.translateY(1);break;
-				case "ArrowRight": camera.translateY(-1);break;
-				case "ArrowUp": camera.translateZ(-1);break;
-				case "ArrowDown": camera.translateZ(1);break;
+				// Vehicle airbrakes, decreases turning radius
+				case "ArrowLeft": controls.hardLeft = true;break;
+				case "ArrowRight": controls.hardRight = true;break;
 
 			}
 
@@ -140,29 +138,34 @@
 				case "d": controls.right = false; break;
 				case "r": controls.up    = false; break;
 				case "f": controls.down  = false; break;
-				case "m": controls.speed = 100; break;
+				case "ArrowLeft": controls.hardLeft = false;break;
+				case "ArrowRight": controls.hardRight = false;break;
 			}
 		}
 
 	  function updateAvatar(){
 			"change the avatar's linear or angular velocity based on controls state (set by WSAD key presses)"
-
 			var forward = podRacer.getWorldDirection(forward);
-
-			if (controls.fwd){
-				podRacer.setLinearVelocity(forward.multiplyScalar(controls.speed));
-			} else if (controls.bwd){
-				podRacer.setLinearVelocity(forward.multiplyScalar(-controls.speed));
-			} else {
-				var velocity = podRacer.getLinearVelocity();
-				velocity.x=velocity.z=0;
-				podRacer.setLinearVelocity(velocity); //stop the xz motion
+			podRacer.setLinearVelocity(forward.multiplyScalar(controls.speed));
+			//Acceleration System
+			if(controls.fwd && controls.speed <= 150){
+				controls.speed += 1;
+			} else if(controls.bwd && controls.speed > -75){
+				controls.speed -= 1;
+			} else if (controls.speed < 0){
+				controls.speed += 1;
+			} else if (controls.speed > 0){
+				controls.speed -= 1;
 			}
 
-			if (controls.left){
-				podRacer.setAngularVelocity(new THREE.Vector3(0,controls.speed*0.1,0));
+			if (controls.hardLeft){
+				podRacer.setAngularVelocity(new THREE.Vector3(0,controls.speed*0.0175,0));
+			} else if (controls.hardRight){
+				podRacer.setAngularVelocity(new THREE.Vector3(0,-controls.speed*0.0175,0));
+			} else if (controls.left){
+				podRacer.setAngularVelocity(new THREE.Vector3(0,controls.speed*0.0075,0));
 			} else if (controls.right){
-				podRacer.setAngularVelocity(new THREE.Vector3(0,-controls.speed*0.1,0));
+				podRacer.setAngularVelocity(new THREE.Vector3(0,-controls.speed*0.0075,0));
 			} else {
 				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
@@ -174,4 +177,7 @@
 		updateAvatar();
 		scene.simulate();
 		renderer.render( scene, camera );
+		//HUD
+		var info = document.getElementById("info");
+		info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed + '</div>';
 	}
