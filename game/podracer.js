@@ -7,8 +7,8 @@
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
-				 hardLeft:false, hardRight:false,
-				speed:10,
+				 hardLeft:false, hardRight:false, boost: false,
+				OnCooldown: false, boostTimer:0, speed:0,
 		    camera:camera}
 
 	init();
@@ -123,7 +123,8 @@
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
 				case "ArrowRight": controls.hardRight = true;break;
-
+				//Boost
+				case " ": controls.boost = true;break;
 			}
 
 		}
@@ -140,6 +141,7 @@
 				case "f": controls.down  = false; break;
 				case "ArrowLeft": controls.hardLeft = false;break;
 				case "ArrowRight": controls.hardRight = false;break;
+				case " ": controls.boost = false;break;
 			}
 		}
 
@@ -147,8 +149,12 @@
 			"change the avatar's linear or angular velocity based on controls state (set by WSAD key presses)"
 			var forward = podRacer.getWorldDirection(forward);
 			podRacer.setLinearVelocity(forward.multiplyScalar(controls.speed));
+
 			//Acceleration System
-			if(controls.fwd && controls.speed <= 150){
+			if(controls.boost && controls.OnCooldown == false){
+				controls.boostTimer += 1.5;
+				controls.speed += 3;
+			} else if(controls.fwd && controls.speed <= 150){
 				controls.speed += 1;
 			} else if(controls.bwd && controls.speed > -75){
 				controls.speed -= 1;
@@ -158,6 +164,20 @@
 				controls.speed -= 1;
 			}
 
+			//Boost usage cooldown timer
+			if(controls.boostTimer > 118 && controls.OnCooldown != true){
+				controls.boostTimer = 300;
+				controls.OnCooldown = true;
+			} else if(controls.boostTimer >= 0 && controls.OnCooldown == true){
+				controls.boostTimer -= .5;
+				if(controls.boostTimer == 0){
+					controls.OnCooldown = false;
+				}
+			} else if(controls.boostTimer >= 0.5 && controls.OnCooldown == false){
+				controls.boostTimer -= .5;
+			}
+
+			//Turn System
 			if (controls.hardLeft){
 				podRacer.setAngularVelocity(new THREE.Vector3(0,controls.speed*0.0175,0));
 			} else if (controls.hardRight){
@@ -179,5 +199,6 @@
 		renderer.render( scene, camera );
 		//HUD
 		var info = document.getElementById("info");
-		info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed + '</div>';
+		info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
+		'  Cooldown:  ' + controls.boostTimer + '</div>';
 	}
