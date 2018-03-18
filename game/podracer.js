@@ -3,7 +3,8 @@
 	var scene, camera, renderer;  // all threejs programs need these
 	var planeMesh, podRacer, testTrack;
 	var light;
-	var forward;
+	var clock;
+	var listener, sound, audioLoader;
 
 	var controls =
 	     {fwd:false, bwd:false, left:false, right:false,
@@ -62,6 +63,12 @@
 		camera.position.set(0,7,-15);
 		camera.lookAt(0,0,10);
 
+		//Initializes audio listener and global audio source
+		listener = new THREE.AudioListener();
+		sound = new THREE.Audio( listener );
+		audioLoader = new THREE.AudioLoader();
+		camera.add( listener );
+		idle();
 	}
 
 	function initPodRacer(){
@@ -90,8 +97,6 @@
 		planeMesh.receiveShadow = true;
 	}
 
-	var clock;
-
 	function initControls(){
 			// here is where we create the eventListeners to respond to operations
 
@@ -103,14 +108,56 @@
 				window.addEventListener( 'keyup',   keyup );
 	  }
 
+		function idle(){
+			if(controls.fwd == true || controls.bwd == true){
+				sound.stop();
+				sound = new THREE.Audio( listener );
+			}
+			audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '/audio/while_idling.wav', function( buffer ) {
+				sound.setBuffer( buffer );
+				sound.setLoop( true );
+				sound.setVolume( 0.03 );
+				sound.play();
+		});
+		}
+
+		function accelerate(){
+			if(controls.fwd == false && controls.bwd == false){
+				sound.stop();
+				sound = new THREE.Audio( listener );
+			}
+			audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '/audio/while_boosting.wav', function( buffer ) {
+				sound.setBuffer( buffer );
+				sound.setLoop( true );
+				sound.setVolume( 0.03 );
+				sound.play();
+		});
+		}
+
+		function boost(){
+			if(controls.boost == false){
+				sound.stop();
+				sound = new THREE.Audio( listener );
+			}
+			audioLoader = new THREE.AudioLoader();
+			audioLoader.load( '/audio/activate_boost.wav', function( buffer ) {
+				sound.setBuffer( buffer );
+				sound.setLoop( false );
+				sound.setVolume( 0.05 );
+				sound.play();
+		});
+		}
+
 		function keydown(event){
 			console.log("Keydown:"+event.key);
 			//console.dir(event);
 			// this is the regular scene
 			switch (event.key){
 				// change the way the avatar is moving
-				case "w": controls.fwd = true;  break;
-				case "s": controls.bwd = true; break;
+				case "w": accelerate(); controls.fwd = true; break;
+				case "s": accelerate(); controls.bwd = true; break;
 				case "a": controls.left = true; break;
 				case "d": controls.right = true; break;
 				case "r": controls.up = true; break;
@@ -124,7 +171,7 @@
 				case "ArrowLeft": controls.hardLeft = true;break;
 				case "ArrowRight": controls.hardRight = true;break;
 				//Boost
-				case " ": controls.boost = true;break;
+				case " ": boost(); controls.boost = true;break;
 			}
 
 		}
@@ -133,8 +180,8 @@
 			//console.log("Keydown:"+event.key);
 			//console.dir(event);
 			switch (event.key){
-				case "w": controls.fwd   = false;  break;
-				case "s": controls.bwd   = false; break;
+				case "w": idle(); controls.fwd  = false; break;
+				case "s": idle(); controls.bwd  = false; break;
 				case "a": controls.left  = false; break;
 				case "d": controls.right = false; break;
 				case "r": controls.up    = false; break;
