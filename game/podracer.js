@@ -45,7 +45,7 @@
 
 		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize( window.innerWidth, window.innerHeight - 50 );
 		document.body.appendChild( renderer.domElement );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -137,6 +137,9 @@
 		}
 
 		function boost(){
+			if(controls.OnCooldown == true){
+				return;
+			}
 			if(controls.boost == false){
 				sound.stop();
 				sound = new THREE.Audio( listener );
