@@ -249,6 +249,6 @@
 		renderer.render( scene, camera );
 		//HUD
 		var info = document.getElementById("info");
-		info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
-		'  Cooldown:  ' + controls.boostTimer + '</div>';
+		/*info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
+		'  Cooldown:  ' + controls.boostTimer + '</div>';*/
 	}
