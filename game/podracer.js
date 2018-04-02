@@ -16,10 +16,10 @@
 
 	function init(){
 			initGame();
-			initPlaneMesh();
-			initTestTrack();
+			//initPlaneMesh();
+			initTrack();
 			initPodRacer();
-			initGridHelper();
+			//initGridHelper();
 			initControls();
 	}
 
@@ -74,35 +74,31 @@
 
 	function initPodRacer(){
 		var loader = new THREE.JSONLoader();
-		var texture = new THREE.TextureLoader().load( '../textures/b2.png' );
+		var texture = new THREE.TextureLoader().load( '../textures/podRacer.png' );
 		loader.load("../models/racer.json",
 					function ( geometry, materials ) {
 						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-						podRacer = new Physijs.BoxMesh(geometry, pmaterial);
-						podRacer.position.y = 0
-						podRacer.position.x = 0
-						podRacer.position.z = 0
+						podRacer = new Physijs.BoxMesh(geometry, pmaterial, 1000);
 						podRacer.add(camera);
+						podRacer.position.x = 500;
 						scene.add(podRacer);
-						scene.add(planeMesh);
+						scene.add(testTrack);
 						animate();
 						});
 	}
 
-	function initTestTrack(){
+	function initTrack(){
 		var loader = new THREE.JSONLoader();
-		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
-		loader.load("../models/racetrack3.json",
+		//var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
+		loader.load("../models/racetrack.json",
 					function ( geometry, materials ) {
-						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
-						pmaterial = new Physijs.createMaterial(material,0.5, 0.5);
-						testTrack = new Physijs.BoxMesh(geometry, pmaterial,0);
-						testTrack.position.y = 0
-						testTrack.position.x = 0
-						testTrack.position.z = 0
-						testTrack.receiveShadow = true;
-						scene.add(testTrack);
+						material = new THREE.MeshLambertMaterial({color:0xffffff, side:THREE.DoubleSide });
+						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+						testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
+						testTrack.position.set(-1,-1,-1);
+						testTrack.rotation.x = Math.PI;
+						testTrack.scale.set(100,100,100);
 						});
 	}
 
@@ -112,7 +108,7 @@
 		var pmaterial = new Physijs.createMaterial(
 				new THREE.MeshLambertMaterial(), 0.5, 0.5);
 		planeMesh = new Physijs.BoxMesh( geometry, pmaterial, 0 );
-		planeMesh.position.y = -10;
+		planeMesh.position.y = -2;
 		planeMesh.rotation.x = -Math.PI/2;
 		planeMesh.receiveShadow = true;
 	}
@@ -189,7 +185,6 @@
 				// switch cameras
 				case "1": camera.position.set(0,7,-15); break;
 				case "2": camera.position.set(0,4,-6); break;
-				case "3": camera.position.set(0,25,-30); break; // We can delete this later. This was just to see if the test track added properly (Rebecca)
 
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
