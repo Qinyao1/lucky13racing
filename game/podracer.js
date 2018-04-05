@@ -16,9 +16,10 @@
 
 	function init(){
 			initGame();
-			initPlaneMesh();
+			//initPlaneMesh();
+			initTrack();
 			initPodRacer();
-			initGridHelper();
+			//initGridHelper();
 			initControls();
 	}
 
@@ -73,16 +74,31 @@
 
 	function initPodRacer(){
 		var loader = new THREE.JSONLoader();
-		var texture = new THREE.TextureLoader().load( '../textures/b2.png' );
+		var texture = new THREE.TextureLoader().load( '../textures/podRacer.png' );
 		loader.load("../models/racer.json",
 					function ( geometry, materials ) {
 						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-						podRacer = new Physijs.BoxMesh(geometry, pmaterial);
+						podRacer = new Physijs.BoxMesh(geometry, pmaterial, 1000);
 						podRacer.add(camera);
+						podRacer.position.x = 500;
 						scene.add(podRacer);
-						scene.add(planeMesh);
+						scene.add(testTrack);
 						animate();
+						});
+	}
+
+	function initTrack(){
+		var loader = new THREE.JSONLoader();
+		//var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
+		loader.load("../models/racetrack.json",
+					function ( geometry, materials ) {
+						material = new THREE.MeshLambertMaterial({color:0xffffff, side:THREE.DoubleSide });
+						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+						testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
+						testTrack.position.set(-1,-1,-1);
+						testTrack.rotation.x = Math.PI;
+						testTrack.scale.set(100,100,100);
 						});
 	}
 
