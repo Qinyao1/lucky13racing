@@ -252,3 +252,7 @@
 		/*info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
 		'  Cooldown:  ' + controls.boostTimer + '</div>';*/
 	}
+
+	function getSpeed(){
+		return controls.speed;
+	}

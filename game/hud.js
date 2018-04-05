@@ -1,38 +1,14 @@
-<!DOCTYPE html>
-<!--
-This is a simple example that shows how to create scenes with textured objects
-that cast shadows!
--->
-<html>
-	<head>
-		<meta charset=utf-8>
-		<meta http-equiv="pragma"
-			content="no-cache"/>
-		<title>Pod Racer</title>
-		<style>
-			body { margin: 0;}
-			canvas { width: 100%; height: 100%;}
-		</style>
-	</head>
-	<body>
-		<script src="../three.js"></script>
-		<script src="/js/physi.js"></script>
-		<script src="../libs/dat.gui.min.js"></script>
-		<script src="../loaders/OBJLoader.js"></script>
-		<script src="podracer.js"></script>
-
-		<canvas class="canvas" id="myCanvas" width="600" height="600"></canvas> 
-		<script src="hud.js"></script>
 
 
-	<!--	<script type="text/javascript" >
+function start(){
+	draw(getSpeed());
+	setTimeout(start, 100);
+}
+
+start();
 
 
-				function redraw(){
-					draw(document.getElementById("myList").value);
-				}
-
-				function draw(speed){
+function draw(speed){
 				      var  canvas = document.getElementById("myCanvas");
 				      var  context = canvas.getContext("2d");
 				      context.clearRect(0,0,canvas.width, canvas.height);
@@ -112,15 +88,3 @@ that cast shadows!
 				        context.restore();
 				        context.translate(-centerX,-centerY);
 				}
-
-		</script>
-</body>		
-<body onload="draw(120);">
-<div>
-<select id="myList" onchange="redraw();">
-  <option value=podracer.speed>Speed = select</option>
-</select>
-</div> -->
-</body>
-</html>
-
