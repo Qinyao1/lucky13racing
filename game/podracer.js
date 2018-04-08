@@ -269,6 +269,11 @@
 		'  Cooldown:  ' + controls.boostTimer + '</div>';*/
 	}
 
+	//ALEXA - used for the speedometer
 	function getSpeed(){
 		return controls.speed;
+	}
+
+	function getTime(){
+		return controls.clock;
 	}
