@@ -5,62 +5,32 @@
 	var light;
 	var clock;
 	var listener, sound, audioLoader;
-
 	var startScene, startCamera, startText;
-
-
 	var controls =
-	     {fwd:false, bwd:false, left:false, right:false,
-				 hardLeft:false, hardRight:false, boost: false,
-				OnCooldown: false, boostTimer:0, speed:0,
-		    camera:camera}
+	     {  fwd:false, bwd:false, left:false, right:false,
+					hardLeft:false, hardRight:false, boost: false,
+				  OnCooldown: false, boostTimer:0, speed:0,
+		    	camera:camera }
 
+	init();
+	initControls();
 
-//////////////////////////////////////////////////////////////////////////////////////////
-//var gameState =
-//		 {score:0, health:10, scene:'start', camera:'none' }
+	var timerVar = setInterval(countTimer, 1000);
+	var totalSeconds = 0;
 
+	function countTimer() {
+	   ++totalSeconds;
+	   var hour = Math.floor(totalSeconds /3600);
+	   var minute = Math.floor((totalSeconds - hour*3600)/60);
+	   var seconds = totalSeconds - (hour*3600 + minute*60);
+	   document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+	}
 
-
-
-//createStartScene();
-init();
-initControls();
-var timerVar = setInterval(countTimer, 1000);
-var totalSeconds = 0;
-function countTimer() {
-   ++totalSeconds;
-   var hour = Math.floor(totalSeconds /3600);
-   var minute = Math.floor((totalSeconds - hour*3600)/60);
-   var seconds = totalSeconds - (hour*3600 + minute*60);
-
-   document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
-}
 	function init(){
 		initPhysijs();
-		scene = initScene();
-		console.log("ssssssssdddedefefe");
-		initRenderer();
-		//	createStartScene();
-//initStartScreen()
-
-			initGame();
-		//	initPlaneMesh();
-	//	initTrack();
-	//	initPodRacer();
-		//	initGridHelper();
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-			///////////////////////////////////////////////////////////////////////////
-	//		createStartScene();
+		initGame();
+		initTrack();
+		initPodRacer();
 	}
 
 	function initGridHelper(){
@@ -72,7 +42,7 @@ function countTimer() {
 
 	function initGame(){
 		//Initializes scene
-	//	scene = new Physijs.Scene();
+		scene = new Physijs.Scene();
 
 		//Initializes skybox
 		var geometry = new THREE.SphereGeometry( 1000, 1000, 80 );
@@ -83,7 +53,6 @@ function countTimer() {
 		var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture, side:THREE.DoubleSide } );
 		var mesh = new THREE.Mesh( geometry, material, 0 );
 		scene.add( mesh );
-
 
 		var geometry2 = new THREE.BoxGeometry( 1000, 1000, 80 );
 		var texture2 = new THREE.TextureLoader().load( '/textures/scene.png' );
@@ -98,15 +67,15 @@ function countTimer() {
 		scene.add( mesh2 );
 
 		//Initializes renderer
-	//	renderer = new THREE.WebGLRenderer();
-	//	renderer.setSize( window.innerWidth, window.innerHeight - 50 );
-	//	document.body.appendChild( renderer.domElement );
-	//	renderer.shadowMap.enabled = true;
-	//	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		renderer = new THREE.WebGLRenderer();
+		renderer.setSize( window.innerWidth, window.innerHeight - 50 );
+		document.body.appendChild( renderer.domElement );
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 		//Initializes Physijs scripts
-	//	Physijs.scripts.worker = '/js/physijs_worker.js';
-	//	Physijs.scripts.ammo = '/js/ammo.js';
+		Physijs.scripts.worker = '/js/physijs_worker.js';
+		Physijs.scripts.ammo = '/js/ammo.js';
 
 		//Initializes light
 		light = new THREE.AmbientLight( 0x404040, 5 );
@@ -114,11 +83,7 @@ function countTimer() {
 
 		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	//camera.position.set(0,7,-15);
 	  camera.position.set(-650,5650,50);
-//	camera.position.set(-1150,5250,-1600);
-	//	camera.rotateZ(Math.PI/2)
-	//camera.lookAt(mesh2);
 		camera.lookAt(0,0,10);
 
 		//Initializes audio listener and global audio source
@@ -127,23 +92,7 @@ function countTimer() {
 		audioLoader = new THREE.AudioLoader();
 		camera.add( listener );
 		idle();
-			initTrack();
-		initPodRacer();
-
 	}
-
-
-	function initRenderer(){
-		renderer = new THREE.WebGLRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight-50 );
-		document.body.appendChild( renderer.domElement );
-		renderer.shadowMap.enabled = true;
-		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-	}
-
-
-
-
 
 	function initPodRacer(){
 		var loader = new THREE.JSONLoader();
@@ -161,29 +110,17 @@ function countTimer() {
 						});
 	}
 
-
 	function initPhysijs(){
 		Physijs.scripts.worker = '/js/physijs_worker.js';
 		Physijs.scripts.ammo = '/js/ammo.js';
 	}
 
-
-
-
-
-	function initScene(){
-		//scene = new THREE.Scene();
-		var scene = new Physijs.Scene();
-		return scene;
-	}
-
-
 	function initTrack(){
 		var loader = new THREE.JSONLoader();
-		//var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
+		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
 		loader.load("../models/racetrack.json",
 					function ( geometry, materials ) {
-						material = new THREE.MeshLambertMaterial({color:0xffffff, side:THREE.DoubleSide });
+						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
 						testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
 						testTrack.position.set(-1,-1,-1);
@@ -192,48 +129,7 @@ function countTimer() {
 						});
 	}
 
-	function initPlaneMesh(){
-		// creating a textured plane which receives shadow
-		var geometry = new THREE.PlaneGeometry( 20000, 20000, 128 );
-		var pmaterial = new Physijs.createMaterial(
-				new THREE.MeshLambertMaterial(), 0.5, 0.5);
-		planeMesh = new Physijs.BoxMesh( geometry, pmaterial, 0 );
-		planeMesh.position.y = -2;
-		planeMesh.rotation.x = -Math.PI/2;
-		planeMesh.receiveShadow = true;
-	}
-
-
-
-
-
-
-
-
-	function addPlaneMesh(s,t,image){
-		"create a plane mesh with the image repeated in an sxt grid"
-		// creating a textured plane which receives shadows
-
-		var geometry = new THREE.PlaneGeometry( 1,1, 128 );
-		var texture = new THREE.TextureLoader().load(image );
-		texture.wrapS = THREE.RepeatWrapping;
-		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.set( s, t );
-		var material = new THREE.MeshLambertMaterial( { color: 0xffffff,  map: texture ,side:THREE.DoubleSide} );
-		var mesh = new THREE.Mesh( geometry, material );
-		scene.add(mesh);
-		mesh.receiveShadow = true;
-		return mesh
-		// we need to rotate the mesh 90 degrees to make it horizontal not vertical
-	}
-
-
-
-
 	function initControls(){
-			// here is where we create the eventListeners to respond to operations
-
-			  //create a clock for the time-based animation ...
 				clock = new THREE.Clock();
 				clock.start();
 
@@ -252,7 +148,7 @@ function countTimer() {
 				sound.setLoop( true );
 				sound.setVolume( 0.03 );
 				sound.play();
-		});
+			});
 		}
 
 		function accelerate(){
@@ -269,45 +165,6 @@ function countTimer() {
 		});
 		}
 
-
-		function createSkyBox(image,k){
-			// creating a textured plane which receives shadows
-			var geometry = new THREE.SphereGeometry( 80, 80, 80 );
-			var texture = new THREE.TextureLoader().load( '../images/'+image );
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
-			texture.repeat.set( k, k );
-			var material = new THREE.MeshLambertMaterial( { color: 0xffffff,  map: texture ,side:THREE.DoubleSide} );
-			//var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
-			//var mesh = new THREE.Mesh( geometry, material );
-			var mesh = new THREE.Mesh( geometry, material, 0 );
-
-			mesh.receiveShadow = false;
-
-
-			return mesh
-			// we need to rotate the mesh 90 degrees to make it horizontal not vertical
-
-
-		}
-
-
-		function createPointLight(){
-			var light;
-			light = new THREE.PointLight( 0xffffff);
-			light.castShadow = true;
-			//Set up shadow properties for the light
-			light.shadow.mapSize.width = 2048;  // default
-			light.shadow.mapSize.height = 2048; // default
-			light.shadow.camera.near = 0.5;       // default
-			light.shadow.camera.far = 500      // default
-			return light;
-		}
-
-
-
-
-
 		function boost(){
 			if(controls.OnCooldown == true){
 				return;
@@ -322,44 +179,11 @@ function countTimer() {
 				sound.setLoop( false );
 				sound.setVolume( 0.05 );
 				sound.play();
-		});
+			});
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		function keydown(event){
 			console.log("Keydown:"+event.key);
-			//console.dir(event);
-			// this is the regular scene
-
-
-
-
-
-
-		//	if (gameState.scene == 'start'&& event.key=='p') {
-		//		gameState.scene = 'main';
-		//		return;
-		//	}
-
-
-
-
-
-
 
 			switch (event.key){
 				// change the way the avatar is moving
@@ -370,23 +194,14 @@ function countTimer() {
 				case "r": controls.up = true; break;
 				case "f": controls.down = true; break;
 
-
-
-
-			//	case "p": controls.up = true; break;
-
-
-
-
 				// switch cameras
 				case "1": camera.position.set(0,7,-15); 	camera.lookAt(0,0,10); break;
 				case "2": camera.position.set(0,4,-6); break;
 
-
-			//	case "3": camera.position.set(-65,5490,-900); break;
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
 				case "ArrowRight": controls.hardRight = true;break;
+
 				//Boost
 				case " ": boost(); controls.boost = true;break;
 			}
@@ -395,7 +210,6 @@ function countTimer() {
 
 		function keyup(event){
 			//console.log("Keydown:"+event.key);
-			//console.dir(event);
 			switch (event.key){
 				case "w": idle(); controls.fwd  = false; break;
 				case "s": idle(); controls.bwd  = false; break;
@@ -406,10 +220,6 @@ function countTimer() {
 				case "ArrowLeft": controls.hardLeft = false;break;
 				case "ArrowRight": controls.hardRight = false;break;
 				case " ": controls.boost = false;break;
-
-
-
-				//case "p": controls.up    = false; break;
 			}
 		}
 
@@ -461,70 +271,14 @@ function countTimer() {
 		}
 
 	function animate() {
+
 		requestAnimationFrame( animate );
-
-
-
-
-
-/*
-		switch(gameState.scene) {
-
-
-			case "start":
-
-
-
-				startText.rotateY(0.005);
-					console.log("aaaaddd");
-				renderer.render( startScene, startCamera );
-				break;
-
-
-
-			case "main":
-			console.log("bbbbbb");
-			updateAvatar();
-			initGame();
-			////nitPlaneMesh();
-		//	initTrack();
-		//	initPodRacer();
-		scene.simulate();
-		if (gameState.camera!= 'none'){
-			renderer.render( scene, gameState.camera );
-		}
-		break;
-
-
-			default:
-			  console.log("don't know the scene "+gameState.scene);
-
-		//	initGridHelper();
-				}
-
-*/
-
-
-
-
-
-
-
-
-
-
-
 		updateAvatar();
 		scene.simulate();
 		renderer.render( scene, camera );
+
 		//HUD
-		//var info = document.getElementById("info");
 		var info = document.getElementById("info");
-
-		//info.innerHTML='<div style="font-size:24pt">Score: '
-	//	+ gameState.score
-
-	//	+ '</div>';
 		/*info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
 		'  Cooldown:  ' + controls.boostTimer + '</div>';*/
 	}
