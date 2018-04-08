@@ -6,8 +6,7 @@ that cast shadows!
 <html>
 	<head>
 		<meta charset=utf-8>
-		<meta http-equiv="pragma"
-			content="no-cache"/>
+		<meta http-equiv="pragma" content="no-cache"/>
 		<title>Pod Racer</title>
 		<style>
 			body { margin: 0;}
@@ -21,14 +20,19 @@ that cast shadows!
 		<script src="../loaders/OBJLoader.js"></script>
 		<script src="podracer.js"></script>
 
-	<!--	<<<<<<< HEAD
-=======
 		<div id="info"></div>
->>>>>>> ef26a556ae681f1a356493e1d8cfd017a02b1821 -->
+	
+		<canvas class="canvas" id="theCanvas" width="300" height="60" style="background: url('../textures/space-canvas.PNG')">
+			Your browser does not support the canvas element.
+		</canvas> 
 
-		<canvas class="canvas" id="theCanvas" width="300" height="300"></canvas> 
+		<div id="timer"></div>
+	 	<div id="stop_timer" onclick="clearInterval(timerVar)">Stop time</div>
+
+		<div id="timer"></div>
+	 	<div id="stop_timer" onclick="clearInterval(timerVar)">Stop time</div>
+
+		<canvas class="canvas" id="theCanvas" width="300" height="300"></canvas>
 		<script src="speedometer.js"></script>
-
 </body>
 </html>
-

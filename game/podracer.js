@@ -5,22 +5,32 @@
 	var light;
 	var clock;
 	var listener, sound, audioLoader;
-
+	var startScene, startCamera, startText;
 	var controls =
-	     {fwd:false, bwd:false, left:false, right:false,
-				 hardLeft:false, hardRight:false, boost: false,
-				OnCooldown: false, boostTimer:0, speed:0,
-		    camera:camera}
+	     {  fwd:false, bwd:false, left:false, right:false,
+					hardLeft:false, hardRight:false, boost: false,
+				  OnCooldown: false, boostTimer:0, speed:0,
+		    	camera:camera }
 
 	init();
+	initControls();
+
+	var timerVar = setInterval(countTimer, 1000);
+	var totalSeconds = 0;
+
+	function countTimer() {
+	   ++totalSeconds;
+	   var hour = Math.floor(totalSeconds /3600);
+	   var minute = Math.floor((totalSeconds - hour*3600)/60);
+	   var seconds = totalSeconds - (hour*3600 + minute*60);
+	   document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+	}
 
 	function init(){
-			initGame();
-			//initPlaneMesh();
-			initTrack();
-			initPodRacer();
-			//initGridHelper();
-			initControls();
+		initPhysijs();
+		initGame();
+		initTrack();
+		initPodRacer();
 	}
 
 	function initGridHelper(){
@@ -44,6 +54,18 @@
 		var mesh = new THREE.Mesh( geometry, material, 0 );
 		scene.add( mesh );
 
+		var geometry2 = new THREE.BoxGeometry( 1000, 1000, 80 );
+		var texture2 = new THREE.TextureLoader().load( '/textures/scene.png' );
+		texture2.wrapS = THREE.RepeatWrapping;
+		texture2.wrapT = THREE.RepeatWrapping;
+		texture2.repeat.set( 1,1 );
+		var material2 = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture2, side:THREE.DoubleSide } );
+		var mesh2 = new THREE.Mesh( geometry2, material2, 0 );
+		mesh2.translateY(5000);
+		mesh2.rotateZ(-Math.PI/2);
+		mesh2.rotateY(Math.PI/2);
+		scene.add( mesh2 );
+
 		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize( window.innerWidth, window.innerHeight - 50 );
@@ -61,7 +83,7 @@
 
 		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		camera.position.set(0,7,-15);
+	  camera.position.set(-650,5650,50);
 		camera.lookAt(0,0,10);
 
 		//Initializes audio listener and global audio source
@@ -88,12 +110,17 @@
 						});
 	}
 
+	function initPhysijs(){
+		Physijs.scripts.worker = '/js/physijs_worker.js';
+		Physijs.scripts.ammo = '/js/ammo.js';
+	}
+
 	function initTrack(){
 		var loader = new THREE.JSONLoader();
-		//var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
+		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
 		loader.load("../models/racetrack.json",
 					function ( geometry, materials ) {
-						material = new THREE.MeshLambertMaterial({color:0xffffff, side:THREE.DoubleSide });
+						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
 						testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
 						testTrack.position.set(-1,-1,-1);
@@ -102,21 +129,7 @@
 						});
 	}
 
-	function initPlaneMesh(){
-		// creating a textured plane which receives shadow
-		var geometry = new THREE.PlaneGeometry( 20000, 20000, 128 );
-		var pmaterial = new Physijs.createMaterial(
-				new THREE.MeshLambertMaterial(), 0.5, 0.5);
-		planeMesh = new Physijs.BoxMesh( geometry, pmaterial, 0 );
-		planeMesh.position.y = -2;
-		planeMesh.rotation.x = -Math.PI/2;
-		planeMesh.receiveShadow = true;
-	}
-
 	function initControls(){
-			// here is where we create the eventListeners to respond to operations
-
-			  //create a clock for the time-based animation ...
 				clock = new THREE.Clock();
 				clock.start();
 
@@ -135,7 +148,7 @@
 				sound.setLoop( true );
 				sound.setVolume( 0.03 );
 				sound.play();
-		});
+			});
 		}
 
 		function accelerate(){
@@ -166,13 +179,12 @@
 				sound.setLoop( false );
 				sound.setVolume( 0.05 );
 				sound.play();
-		});
+			});
 		}
 
 		function keydown(event){
 			console.log("Keydown:"+event.key);
-			//console.dir(event);
-			// this is the regular scene
+
 			switch (event.key){
 				// change the way the avatar is moving
 				case "w": accelerate(); controls.fwd = true; break;
@@ -183,12 +195,13 @@
 				case "f": controls.down = true; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,7,-15); break;
+				case "1": camera.position.set(0,7,-15); 	camera.lookAt(0,0,10); break;
 				case "2": camera.position.set(0,4,-6); break;
 
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
 				case "ArrowRight": controls.hardRight = true;break;
+
 				//Boost
 				case " ": boost(); controls.boost = true;break;
 			}
@@ -197,7 +210,6 @@
 
 		function keyup(event){
 			//console.log("Keydown:"+event.key);
-			//console.dir(event);
 			switch (event.key){
 				case "w": idle(); controls.fwd  = false; break;
 				case "s": idle(); controls.bwd  = false; break;
@@ -259,10 +271,12 @@
 		}
 
 	function animate() {
+
 		requestAnimationFrame( animate );
 		updateAvatar();
 		scene.simulate();
 		renderer.render( scene, camera );
+
 		//HUD
 		var info = document.getElementById("info");
 		/*info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
