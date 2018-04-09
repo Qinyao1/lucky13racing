@@ -6,6 +6,7 @@
 	var clock;
 	var listener, sound, audioLoader;
 	var startScene, startCamera, startText;
+	var deathScene, deathCamera, deathText;
 	var controls =
 	     {  fwd:false, bwd:false, left:false, right:false,
 					hardLeft:false, hardRight:false, boost: false,
@@ -115,20 +116,6 @@
 		Physijs.scripts.ammo = '/js/ammo.js';
 	}
 
-	// function initTrack(){
-	// 	var loader = new THREE.JSONLoader();
-	// 	var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
-	// 	loader.load("../models/racetrack.json",
-	// 				function ( geometry, materials ) {
-	// 					material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
-	// 					pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-	// 					testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
-	// 					testTrack.position.set(-1,-1,-1);
-	// 					testTrack.rotation.x = Math.PI;
-	// 					testTrack.scale.set(100,100,100);
-	// 					});
-	// }
-
 	function initTrack() {
 		var geometry = new THREE.RingGeometry();
 		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
@@ -141,6 +128,25 @@
 		scene.add(testTrack);
 	}
 
+	// function createDeathScene() {
+	// 	deathScene = new Physijs.Scene();
+	// 	var geometry = new THREE.SphereGeometry( 1000, 1000, 80 );
+	// 	var texture = new THREE.TextureLoader().load( '../textures/youdied.png' );
+	// 	texture.wrapS = THREE.RepeatWrapping;
+	// 	texture.wrapT = THREE.RepeatWrapping;
+	// 	texture.repeat.set( 10, 10 );
+	// 	var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture, side:THREE.DoubleSide } );
+	// 	var deathText = new THREE.Mesh( geometry, material, 0 );
+	// 	deathScene.add(deathText);
+	// 	var light1 = new THREE.PointLight( 0xffffff);
+	// 	light1.position.set(0,200,20);
+	// 	deathScene.add(light1);
+	// 	deathCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+	// 	deathCamera.position.set(0,50,1);
+	// 	deathCamera.lookAt(0,0,0);
+	// 	initGame();
+	// }
+	
 	function initControls(){
 				clock = new THREE.Clock();
 				clock.start();
@@ -280,6 +286,14 @@
 				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
 
+			// Falling of test track
+			if ((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > - 250)) {
+				podRacer.position.y = -1000
+				// createDeathScene();
+			}
+			if ((podRacer.position.z > 500 || podRacer.position.z < -500) || (podRacer.position.z < 250 && podRacer.position.z > - 250)) {
+				podRacer.position.y = -1000
+			}
 		}
 
 	function animate() {
