@@ -121,8 +121,8 @@
 						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
 						earth = new Physijs.BoxMesh(geometry, pmaterial, 0);
-						earth.position.x = 350;
-						earth.position.z = 200;
+						earth.position.x = 100;
+						earth.position.z = 100;
 						earth.scale.set(10,10,10);
 						scene.add(earth);
 					});
