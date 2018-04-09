@@ -133,18 +133,30 @@
 		Physijs.scripts.ammo = '/js/ammo.js';
 	}
 
-	function initTrack(){
-		var loader = new THREE.JSONLoader();
+	// function initTrack(){
+	// 	var loader = new THREE.JSONLoader();
+	// 	var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
+	// 	loader.load("../models/racetrack.json",
+	// 				function ( geometry, materials ) {
+	// 					material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
+	// 					pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+	// 					testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
+	// 					testTrack.position.set(-1,-1,-1);
+	// 					testTrack.rotation.x = Math.PI;
+	// 					testTrack.scale.set(100,100,100);
+	// 					});
+	// }
+
+	function initTrack() {
+		var geometry = new THREE.RingGeometry();
 		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
-		loader.load("../models/racetrack.json",
-					function ( geometry, materials ) {
-						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
-						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-						testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
-						testTrack.position.set(-1,-1,-1);
-						testTrack.rotation.x = Math.PI;
-						testTrack.scale.set(100,100,100);
-						});
+		var material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
+		var pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+		testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
+		testTrack.position.set(50,-1,0);
+		testTrack.rotation.x = Math.PI/2;
+		testTrack.scale.set(500,500,500); // outer radius = 500, inner radius = 250
+		scene.add(testTrack);
 	}
 
 	function initControls(){
