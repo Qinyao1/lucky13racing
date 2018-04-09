@@ -32,6 +32,7 @@
 		initGame();
 		initTrack();
 		initPodRacer();
+		initEarth();
 	}
 
 	function initGridHelper(){
@@ -84,7 +85,7 @@
 
 		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	  camera.position.set(-650,5650,50);
+	  	camera.position.set(-650,5650,50);
 		camera.lookAt(0,0,10);
 
 		//Initializes audio listener and global audio source
@@ -96,6 +97,7 @@
 	}
 
 	function initPodRacer(){
+		console.log("hello!");
 		var loader = new THREE.JSONLoader();
 		var texture = new THREE.TextureLoader().load( '../textures/podRacer.png' );
 		loader.load("../models/racer.json",
@@ -109,6 +111,22 @@
 						scene.add(testTrack);
 						animate();
 						});
+	}
+
+	//ALEXA
+	function initEarth(){
+		var loader = new THREE.JSONLoader();
+		var texture = new THREE.TextureLoader().load( '../textures/earth.PNG' );
+		loader.load("../models/earth.json",
+					function ( geometry, materials ) {
+						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
+						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
+						earth = new Physijs.BoxMesh(geometry, pmaterial, 0);
+						earth.position.x = 100;
+						earth.position.z = 100;
+						earth.scale.set(10,10,10);
+						scene.add(earth);
+					});
 	}
 
 	function initPhysijs(){
