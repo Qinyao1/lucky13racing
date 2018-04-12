@@ -96,10 +96,9 @@
 	}
 
 	function initPodRacer(){
-		console.log("hello!");
 		var loader = new THREE.JSONLoader();
-		var texture = new THREE.TextureLoader().load( '../textures/diffuse.bmp' );
-		loader.load("../models/feisar.json",
+		var texture = new THREE.TextureLoader().load( '../textures/Apex.png' );
+		loader.load("../models/Apex.json",
 					function ( geometry, materials ) {
 						material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture});
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
@@ -211,8 +210,8 @@
 				case "f": controls.down = true; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,7,-15); 	camera.lookAt(0,0,10); break;
-				case "2": camera.position.set(0,4,-6); break;
+				case "1": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
+				case "2": camera.position.set(0,15,-20); camera.lookAt(0,0,10); break;
 
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
