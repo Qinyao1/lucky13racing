@@ -133,20 +133,6 @@
 		Physijs.scripts.ammo = '/js/ammo.js';
 	}
 
-	// function initTrack(){
-	// 	var loader = new THREE.JSONLoader();
-	// 	var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
-	// 	loader.load("../models/racetrack.json",
-	// 				function ( geometry, materials ) {
-	// 					material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
-	// 					pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-	// 					testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
-	// 					testTrack.position.set(-1,-1,-1);
-	// 					testTrack.rotation.x = Math.PI;
-	// 					testTrack.scale.set(100,100,100);
-	// 					});
-	// }
-
 	function initTrack() {
 		var geometry = new THREE.RingGeometry();
 		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
@@ -297,7 +283,16 @@
 			} else {
 				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
-
+			// podRacer.__dirtyPosition = true;
+			if((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > -250)) {
+				"Entered if statement"
+				podRacer.position. y = -1000
+				podRacer.__dirtyPosition = true;
+			}
+			// if((podRacer.position.z > 500 || podRacer.position.z < -500) || (podRacer.position.z < 250 && podRacer.position.z > -250)) {
+			// 	podRacer.position.y = -1000;
+			// 	podRacer.__dirtyPosition = true;
+			// }
 		}
 
 	function animate() {
