@@ -147,7 +147,7 @@
 			gameInfo.lap++;
 		}
 
-		if(checkPoint.position.distanceTo(podRacer.position) < 30){
+		if(checkPoint.position.distanceTo(podRacer.position) < 40){
 			gameInfo.CP++;
 			checkPoint.position.set(
 				checkPointXposition[gameInfo.CP],
@@ -281,7 +281,7 @@
 			} else if(controls.fwd && controls.speed < 750){
 				controls.speed += 1;
 			} else if(controls.bwd && controls.speed > -75){
-				controls.speed -= 3;
+				controls.speed -= 5;
 			} else if (controls.speed < 0){
 				controls.speed += 1;
 			} else if (controls.speed > 0){
