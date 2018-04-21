@@ -1,9 +1,8 @@
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
-	var planeMesh, podRacer, testTrack;
-	var light;
-	var clock;
+	var planeMesh, podRacer, track, checkPoint;
+	var light, clock;
 	var listener, sound, audioLoader;
 	var startScene, startCamera, startText;
 	var controls =
@@ -11,6 +10,13 @@
 					hardLeft:false, hardRight:false, boost: false,
 				  OnCooldown: false, boostTimer:0, speed:0,
 		    	camera:camera }
+
+	var gameInfo =
+				{ nextCP:false, CP:0, lap:1 }
+
+	const checkPointXposition = [ 315, 50, -165, -300, -220, 35, 310, 390 ];
+	const checkPointYposition = 0.35;
+	const checkPointZposition = [ 230, 340, 270, 30, -250, -350, -270, -10 ];
 
 	init();
 	initControls();
@@ -32,13 +38,7 @@
 		initTrack();
 		initPodRacer();
 		initEarth();
-	}
-
-	function initGridHelper(){
-		var size = 10000;
-		var divisions = 10000;
-		var gridHelper = new THREE.GridHelper( size, divisions );
-		scene.add( gridHelper );
+		initCheckPoint();
 	}
 
 	function initGame(){
@@ -84,7 +84,7 @@
 
 		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	  	camera.position.set(-650,5650,50);
+	  camera.position.set(-650,5650,50);
 		camera.lookAt(0,0,10);
 
 		//Initializes audio listener and global audio source
@@ -106,7 +106,7 @@
 						podRacer.add(camera);
 						podRacer.position.x = 350;
 						scene.add(podRacer);
-						scene.add(testTrack);
+						scene.add(track);
 						animate();
 						});
 	}
@@ -127,6 +127,37 @@
 					});
 	}
 
+	function initCheckPoint(){
+		var texture = new THREE.TextureLoader().load( '/textures/yellowcloud_ft.jpg' );
+		var geometry = new THREE.TorusGeometry(10, 2, 16, 100);
+		var material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side: THREE.DoubleSide});
+		checkPoint = new THREE.Mesh(geometry, material);
+		checkPoint.scale.set(2,2,2);
+		checkPoint.position.set(
+			checkPointXposition[0],
+			checkPointYposition,
+		 	checkPointZposition[0]);
+
+		scene.add(checkPoint);
+	}
+
+	function updateCheckPoint(){
+		if(gameInfo.CP >= 7){
+			gameInfo.CP = 0;
+			gameInfo.lap++;
+		}
+
+		if(checkPoint.position.distanceTo(podRacer.position) < 30){
+			gameInfo.CP++;
+			checkPoint.position.set(
+				checkPointXposition[gameInfo.CP],
+				checkPointYposition,
+				checkPointZposition[gameInfo.CP])
+		} else {
+			checkPoint.rotateY(.05);
+		}
+	}
+
 	function initPhysijs(){
 		Physijs.scripts.worker = '/js/physijs_worker.js';
 		Physijs.scripts.ammo = '/js/ammo.js';
@@ -137,11 +168,11 @@
 		var texture = new THREE.TextureLoader().load( '../textures/desert.png' );
 		var material = new THREE.MeshLambertMaterial({color:0xffffff, map:texture, side:THREE.DoubleSide });
 		var pmaterial = new Physijs.createMaterial(material,0.1,0.5);
-		testTrack = new Physijs.BoxMesh(geometry, pmaterial, 0);
-		testTrack.position.set(50,-1,0);
-		testTrack.rotation.x = Math.PI/2;
-		testTrack.scale.set(500,500,500); // outer radius = 500, inner radius = 250
-		scene.add(testTrack);
+		track = new Physijs.BoxMesh(geometry, pmaterial, 0);
+		track.position.set(50,-1,0);
+		track.rotation.x = Math.PI/2;
+		track.scale.set(500,500,500); // outer radius = 500, inner radius = 250
+		scene.add(track);
 	}
 
 	function initControls(){
@@ -210,7 +241,7 @@
 				case "f": controls.down = true; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,15,-20); camera.lookAt(0,0,10); break;
+				case "1": camera.position.set(0,7,-10); camera.lookAt(0,0,10); break;
 				case "2": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
 
 				// Vehicle airbrakes, decreases turning radius
@@ -247,7 +278,7 @@
 			if(controls.boost && controls.OnCooldown == false){
 				controls.boostTimer += 1.5;
 				controls.speed += 3;
-			} else if(controls.fwd){
+			} else if(controls.fwd && controls.speed < 750){
 				controls.speed += 1;
 			} else if(controls.bwd && controls.speed > -75){
 				controls.speed -= 3;
@@ -282,6 +313,11 @@
 			} else {
 				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
+
+			if(podRacer.position.y > 0.5){
+				podRacer.position.y = 0.33; //Normal y position of podRacer
+				podRacer.__dirtyPosition;
+			}
 			// podRacer.__dirtyPosition = true;
 			/*if((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > -250)) {
 				"Entered if statement"
@@ -297,6 +333,7 @@
 	function animate() {
 
 		requestAnimationFrame( animate );
+		updateCheckPoint();
 		updateAvatar();
 		scene.simulate();
 		renderer.render( scene, camera );
