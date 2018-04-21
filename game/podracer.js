@@ -210,8 +210,8 @@
 				case "f": controls.down = true; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
-				case "2": camera.position.set(0,15,-20); camera.lookAt(0,0,10); break;
+				case "1": camera.position.set(0,15,-20); camera.lookAt(0,0,10); break;
+				case "2": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
 
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
@@ -247,10 +247,10 @@
 			if(controls.boost && controls.OnCooldown == false){
 				controls.boostTimer += 1.5;
 				controls.speed += 3;
-			} else if(controls.fwd && controls.speed <= 150){
+			} else if(controls.fwd){
 				controls.speed += 1;
 			} else if(controls.bwd && controls.speed > -75){
-				controls.speed -= 1;
+				controls.speed -= 3;
 			} else if (controls.speed < 0){
 				controls.speed += 1;
 			} else if (controls.speed > 0){
@@ -283,11 +283,11 @@
 				podRacer.setAngularVelocity(new THREE.Vector3(0,0,0));
 			}
 			// podRacer.__dirtyPosition = true;
-			if((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > -250)) {
+			/*if((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > -250)) {
 				"Entered if statement"
 				podRacer.position. y = -1000
 				podRacer.__dirtyPosition = true;
-			}
+			}*/
 			// if((podRacer.position.z > 500 || podRacer.position.z < -500) || (podRacer.position.z < 250 && podRacer.position.z > -250)) {
 			// 	podRacer.position.y = -1000;
 			// 	podRacer.__dirtyPosition = true;
