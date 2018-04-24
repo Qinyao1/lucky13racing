@@ -1,7 +1,7 @@
 	// First we declare the variables that hold the objects we need
 	// in the animation code
 	var scene, camera, renderer;  // all threejs programs need these
-	var planeMesh, podRacer, track, checkPoint;
+	var planeMesh, podRacer, track, checkPoint, barrier;
 	var light, clock;
 	var listener, sound, audioLoader;
 	var startScene, startCamera, startText;
@@ -39,6 +39,7 @@
 		initPodRacer();
 		initEarth();
 		initCheckPoint();
+		addBarriers();
 	}
 
 	function initGame(){
@@ -351,4 +352,24 @@
 
 	function getTime(){
 		return controls.clock;
+	}
+
+	function addBarriers(){
+		var geometry = new THREE.RingBufferGeometry( 200, 280, 32 );
+		var material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
+		barrier = new Physijs.BoxMesh( geometry, material, 0 );
+		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
+		barrier.position.set(70, 2, 0);
+
+		barrier.addEventListener( 'collision', 
+			function( other_object, relative_velocity, relative_rotation, contact_normal ){
+				console.log("created a collision");
+				if(other_object == podRacer){
+					console.log("hit barrier");
+					barrier.material.color.setHex(0xffffff);
+				}
+			}
+		)
+
+		scene.add( barrier );
 	}
