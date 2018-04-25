@@ -105,7 +105,18 @@
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
 						podRacer = new Physijs.BoxMesh(geometry, pmaterial, 1000);
 						podRacer.add(camera);
-						podRacer.position.x = 350;
+						podRacer.position.x = 360;
+
+						//ALEXA
+						podRacer.addEventListener( 'collision', 
+									function( other_object ){
+										if(other_object == barrier){
+											console.log("hit barrier");
+											barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
+										}
+									}
+								)
+
 						scene.add(podRacer);
 						scene.add(track);
 						animate();
@@ -354,22 +365,12 @@
 		return controls.clock;
 	}
 
+	//ALEXA
 	function addBarriers(){
 		var geometry = new THREE.RingBufferGeometry( 200, 280, 32 );
 		var material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
 		barrier = new Physijs.BoxMesh( geometry, material, 0 );
 		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
-		barrier.position.set(70, 2, 0);
-
-		barrier.addEventListener( 'collision', 
-			function( other_object, relative_velocity, relative_rotation, contact_normal ){
-				console.log("created a collision");
-				if(other_object == podRacer){
-					console.log("hit barrier");
-					barrier.material.color.setHex(0xffffff);
-				}
-			}
-		)
-
+		barrier.position.set(70, 0, 0);
 		scene.add( barrier );
 	}
