@@ -37,7 +37,7 @@
 		initGame();
 		initTrack();
 		initPodRacer();
-		initEarth();
+		initBackgroundObjects();
 		initCheckPoint();
 		addBarriers();
 	}
@@ -85,7 +85,7 @@
 
 		//Initializes camera
 		camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-	  camera.position.set(-650,5650,50);
+	  	camera.position.set(-650,5650,50);
 		camera.lookAt(0,0,10);
 
 		//Initializes audio listener and global audio source
@@ -107,15 +107,15 @@
 						podRacer.add(camera);
 						podRacer.position.x = 360;
 
-						//ALEXA
-						podRacer.addEventListener( 'collision', 
-									function( other_object ){
-										if(other_object == barrier){
-											console.log("hit barrier");
-											barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
-										}
-									}
-								)
+						// //ALEXA
+						// podRacer.addEventListener( 'collision', 
+						// 			function( other_object ){
+						// 				if(other_object == barrier){
+						// 					console.log("hit barrier");
+						// 					barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
+						// 				}
+						// 			}
+						// 		)
 
 						scene.add(podRacer);
 						scene.add(track);
@@ -124,7 +124,7 @@
 	}
 
 	//ALEXA
-	function initEarth(){
+	function initBackgroundObjects(){
 		var loader = new THREE.JSONLoader();
 		var texture = new THREE.TextureLoader().load( '../textures/earth.PNG' );
 		loader.load("../models/earth.json",
@@ -135,8 +135,29 @@
 						earth.position.x = 100;
 						earth.position.z = 100;
 						earth.scale.set(10,10,10);
+						earth.rotation.set(Math.PI/2, 0, 0);
 						scene.add(earth);
 					});
+
+		createSphere('../textures/mercury.jpeg', 0, 0);
+		createSphere('../textures/venus.jpeg', 100, -100);
+		createSphere('../textures/mars.jpeg', 50, -50);
+		createSphere('../textures/saturn.jpeg', 200, -80);
+		createSphere('../textures/uranus.jpeg', 300, -30);
+		createSphere('../textures/neptune.PNG', 150, -30);
+		createSphere('../textures/pluto.PNG', 180, -100);
+	}
+
+	//ALEXA
+	function createSphere(texture, xPos, zPos){
+		var texture = new THREE.TextureLoader().load( texture );
+		var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xffffff, map: texture} );
+		var sphere = new THREE.Mesh( geometry, material );
+		sphere.scale.set(5, 5, 5)
+		sphere.position.set(xPos, 0, zPos);
+		sphere.rotateZ(0.5);
+		scene.add( sphere );
 	}
 
 	function initCheckPoint(){
@@ -347,6 +368,7 @@
 		requestAnimationFrame( animate );
 		updateCheckPoint();
 		updateAvatar();
+		updateBackgroundObjects();
 		scene.simulate();
 		renderer.render( scene, camera );
 
@@ -367,10 +389,16 @@
 
 	//ALEXA
 	function addBarriers(){
+		var texture = new THREE.TextureLoader().load( '../textures/holo.jpeg' );
 		var geometry = new THREE.RingBufferGeometry( 200, 280, 32 );
-		var material = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
+		var material = new THREE.MeshBasicMaterial( { color: 0xfffff, side: THREE.DoubleSide, map: texture } );
 		barrier = new Physijs.BoxMesh( geometry, material, 0 );
 		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
 		barrier.position.set(70, 0, 0);
 		scene.add( barrier );
+	}
+
+	function updateBackgroundObjects(){
+		barrier.rotateZ(0.5);
+		barrier.__dirtyRotation = true;
 	}
