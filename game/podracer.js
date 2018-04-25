@@ -175,9 +175,9 @@
 		createSphere('../textures/venus.jpeg', 100, -100);
 		createSphere('../textures/mars.jpeg', 50, -50);
 		createSphere('../textures/saturn.jpeg', 200, -80);
-		createSphere('../textures/uranus.jpeg', 300, -30);
-		createSphere('../textures/neptune.PNG', 150, -30);
-		createSphere('../textures/pluto.PNG', 180, -100);
+		createSphere('../textures/uranus.jpeg', 250, -30);
+		createSphere('../textures/neptune.PNG', 200, -30);
+		createSphere('../textures/pluto.PNG', 200, -100);
 	}
 
 	//ALEXA
@@ -199,9 +199,9 @@
 		checkPoint = new THREE.Mesh(geometry, material);
 		checkPoint.scale.set(2,2,2);
 		checkPoint.position.set(
-			checkPointXposition[0],
-			checkPointYposition,
-		 	checkPointZposition[0]);
+		checkPointXposition[0],
+		checkPointYposition,
+		checkPointZposition[0]);
 
 		scene.add(checkPoint);
 	}
@@ -426,7 +426,7 @@
 		var material = new THREE.MeshBasicMaterial( { color: 0xfffff, side: THREE.DoubleSide, map: texture } );
 		barrier = new Physijs.BoxMesh( geometry, material, 0 );
 		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
-		barrier.position.set(70, 2, 0);
+		barrier.position.set(70, 1.5, 0);
 
 		// barrier.addEventListener( 'collision',
 		// 		function( other_object ){
