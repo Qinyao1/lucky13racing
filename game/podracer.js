@@ -13,11 +13,12 @@
 		    	camera:camera }
 
 	var gameInfo =
-				{ nextCP:false, CP:0, lap:1 }
+				{ nextCP:false, CP:0, lap:1, isOffTrack:false }
 
 	const checkPointXposition = [ 315, 50, -165, -300, -220, 35, 310, 390 ];
 	const checkPointYposition = 0.35;
 	const checkPointZposition = [ 230, 340, 270, 30, -250, -350, -270, -10 ];
+	const trackCenter = new THREE.Vector3(50,-1,0);
 
 	init();
 	initControls();
@@ -60,7 +61,7 @@
 		initPodRacer();
 		initBackgroundObjects();
 		initCheckPoint();
-		addBarriers();
+		//addBarriers();
 	}
 
 	function initGame(){
@@ -383,31 +384,34 @@
 				podRacer.position.y = 0.33; //Normal y position of podRacer
 				podRacer.__dirtyPosition;
 			}
-			// podRacer.__dirtyPosition = true;
-			/*if((podRacer.position.x > 500 || podRacer.position.x < -500) || (podRacer.position.x < 250 && podRacer.position.x > -250)) {
-				"Entered if statement"
-				podRacer.position. y = -1000
+		}
+
+		function checkTrackBoundary(){
+			if(podRacer.position.y < 0){
+				podRacer.position.y -= 10;
 				podRacer.__dirtyPosition = true;
-			}*/
-			// if((podRacer.position.z > 500 || podRacer.position.z < -500) || (podRacer.position.z < 250 && podRacer.position.z > -250)) {
-			// 	podRacer.position.y = -1000;
-			// 	podRacer.__dirtyPosition = true;
-			// }
+				gameInfo.isOffTrack = true;
+			} else if(podRacer.position.distanceTo(trackCenter) < 465 &&
+					podRacer.position.distanceTo(trackCenter) > 235){
+			} else {
+				podRacer.position.y -= 10;
+				podRacer.__dirtyPosition = true;
+				gameInfo.isOffTrack = true;
+			}
 		}
 
 	function animate() {
-
+		console.log(podRacer.position.distanceTo(trackCenter));
 		requestAnimationFrame( animate );
 		updateCheckPoint();
 		updateAvatar();
-		updateBackgroundObjects();
+		//updateBackgroundObjects();
+		checkTrackBoundary();
 		scene.simulate();
 		renderer.render( scene, camera );
 
 		//HUD
 		var info = document.getElementById("info");
-		/*info.innerHTML='<div style="font-size:24pt">Speed: ' + controls.speed +
-		'  Cooldown:  ' + controls.boostTimer + '</div>';*/
 	}
 
 	//ALEXA - used for the speedometer
