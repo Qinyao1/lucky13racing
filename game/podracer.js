@@ -5,6 +5,7 @@
 	var light, clock;
 	var listener, sound, audioLoader;
 	var startScene, startCamera, startText;
+	var endScene, endCamera;
 	var controls =
 	     {  fwd:false, bwd:false, left:false, right:false,
 					hardLeft:false, hardRight:false, boost: false,
@@ -30,6 +31,26 @@
 	   var minute = Math.floor((totalSeconds - hour*3600)/60);
 	   var seconds = totalSeconds - (hour*3600 + minute*60);
 	   document.getElementById("timer").innerHTML = hour + ":" + minute + ":" + seconds;
+	}
+
+	function createEndScene(){
+		endScene = new Physijs.Scene();
+		var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
+		var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat.set( 1,1 );
+		var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture, side:THREE.DoubleSide } );
+		var mesh = new THREE.Mesh( geometry, material, 0 );
+		mesh.translateY(5000);
+		mesh.rotateZ(-Math.PI/2);
+		mesh.rotateY(Math.PI/2);
+		endScene.add( mesh );
+		endCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		endCamera.position.set(0,50,1);
+		endCamera.lookAt(0,0,0);
+		return endScene
+
 	}
 
 	function init(){
@@ -108,7 +129,7 @@
 						podRacer.position.x = 360;
 
 						// //ALEXA
-						// podRacer.addEventListener( 'collision', 
+						// podRacer.addEventListener( 'collision',
 						// 			function( other_object ){
 						// 				if(other_object == barrier){
 						// 					console.log("hit barrier");
