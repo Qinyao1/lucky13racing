@@ -126,17 +126,28 @@
 						pmaterial = new Physijs.createMaterial(material,0.1,0.5);
 						podRacer = new Physijs.BoxMesh(geometry, pmaterial, 1000);
 						podRacer.add(camera);
-						podRacer.position.x = 360;
+						podRacer.position.x = 450;
 
-						// //ALEXA
-						// podRacer.addEventListener( 'collision',
-						// 			function( other_object ){
-						// 				if(other_object == barrier){
-						// 					console.log("hit barrier");
-						// 					barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
-						// 				}
-						// 			}
-						// 		)
+
+						podRacer.addEventListener( 'collision',
+								function( other_object ){
+									if(other_object == barrier){
+										console.log("hit barrier");
+										//barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
+										var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
+										var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
+										texture.wrapS = THREE.RepeatWrapping;
+										texture.wrapT = THREE.RepeatWrapping;
+										texture.repeat.set( 1,1 );
+										var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture, side:THREE.DoubleSide } );
+										var mesh = new THREE.Mesh( geometry, material, 0 );
+										mesh.translateY(5000);
+										mesh.rotateZ(-Math.PI/2);
+										mesh.rotateY(Math.PI/2);
+										scene.add( mesh );
+									}
+								}
+							)
 
 						scene.add(podRacer);
 						scene.add(track);
@@ -415,7 +426,28 @@
 		var material = new THREE.MeshBasicMaterial( { color: 0xfffff, side: THREE.DoubleSide, map: texture } );
 		barrier = new Physijs.BoxMesh( geometry, material, 0 );
 		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
-		barrier.position.set(70, 0, 0);
+		barrier.position.set(70, 2, 0);
+
+		// barrier.addEventListener( 'collision',
+		// 		function( other_object ){
+		// 			if(other_object == podRacer){
+		// 				console.log("hit barrier");
+		// 				//barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
+		// 				var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
+		// 				var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
+		// 				texture.wrapS = THREE.RepeatWrapping;
+		// 				texture.wrapT = THREE.RepeatWrapping;
+		// 				texture.repeat.set( 1,1 );
+		// 				var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture, side:THREE.DoubleSide } );
+		// 				var mesh = new THREE.Mesh( geometry, material, 0 );
+		// 				mesh.translateY(5000);
+		// 				mesh.rotateZ(-Math.PI/2);
+		// 				mesh.rotateY(Math.PI/2);
+		// 				scene.add( mesh );
+		// 			}
+		// 		}
+		// 	)
+
 		scene.add( barrier );
 	}
 
