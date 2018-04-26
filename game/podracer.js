@@ -92,7 +92,7 @@
 
 		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
-		renderer.setSize( window.innerWidth, window.innerHeight - 50 );
+		renderer.setSize( window.innerWidth, window.innerHeight - 275 );
 		document.body.appendChild( renderer.domElement );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;

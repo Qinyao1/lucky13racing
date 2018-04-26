@@ -32,7 +32,7 @@ function draw(speed){
 	context.beginPath();
 	context.strokeStyle = '#ffff00';
 	context.translate(centerX,centerY);
-	var increment = 5;		//increment the speed numbers by 5mph
+	var increment = 20;		//increment the speed numbers by 5mph
 	context.font="6px Helvetica";	//changes size of numbers
 
 	//create the speed numbers & yellow ticks
@@ -57,7 +57,7 @@ function draw(speed){
 		}
 		//create the smaller yellow ticks
 		else{
-			context.lineWidth = 2; 			
+			context.lineWidth = 2;
 			iPointX = sineAngle *(radius -radius/5.5);
 			iPointY = cosAngle *(radius -radius/5.5);
 			oPointX = sineAngle *(radius -radius/7);
@@ -88,7 +88,7 @@ function draw(speed){
 	context.closePath();
 
 	//finish creating the black rectangular "clock hand"
-	context.beginPath();    	
+	context.beginPath();
 	context.lineWidth = 4; 	//width of dial
 	context.moveTo(0,0);
 	context.lineTo(pointX,pointY);
