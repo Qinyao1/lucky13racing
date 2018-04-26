@@ -61,7 +61,8 @@
 		initPodRacer();
 		initBackgroundObjects();
 		initCheckPoint();
-		//addBarriers();
+		addBarriers();
+		updateBackgroundObjects();
 	}
 
 	function initGame(){
