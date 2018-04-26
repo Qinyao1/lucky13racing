@@ -89,6 +89,18 @@
 		mesh2.rotateZ(-Math.PI/2);
 		mesh2.rotateY(Math.PI/2);
 		scene.add( mesh2 );
+		
+		var geometry3 = new THREE.BoxGeometry( 1000, 1000, 80 );
+		var texture3 = new THREE.TextureLoader().load( '/textures/controls.png' );
+		texture3.wrapS = THREE.RepeatWrapping;
+		texture3.wrapT = THREE.RepeatWrapping;
+		texture3.repeat.set( 1,1 );
+		var material3 = new THREE.MeshLambertMaterial( { color: 0xffffff, map:texture3, side:THREE.DoubleSide } );
+		var mesh3 = new THREE.Mesh( geometry3, material3, 0 );
+		mesh3.translateY(2000);
+		mesh3.rotateX(Math.PI/2);
+		//mesh3.rotateY(Math.PI/2);
+		scene.add( mesh3 );
 
 		//Initializes renderer
 		renderer = new THREE.WebGLRenderer();
@@ -307,8 +319,9 @@
 				case "f": controls.down = true; break;
 
 				// switch cameras
-				case "1": camera.position.set(0,7,-10); camera.lookAt(0,0,10); break;
-				case "2": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
+				case "1": camera.position.set(0,2500,-100);camera.lookAt(0,0,10);break;
+				case "2": camera.position.set(0,7,-10); camera.lookAt(0,0,10); break;
+				case "3": camera.position.set(0,4,-2); camera.lookAt(0,0,10) ;break;
 
 				// Vehicle airbrakes, decreases turning radius
 				case "ArrowLeft": controls.hardLeft = true;break;
