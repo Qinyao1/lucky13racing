@@ -62,7 +62,7 @@
 		initBackgroundObjects();
 		initCheckPoint();
 		addBarriers();
-		updateBackgroundObjects();
+		//updateBackgroundObjects();
 	}
 
 	function initGame(){
@@ -131,25 +131,25 @@
 						podRacer.position.x = 450;
 
 
-						podRacer.addEventListener( 'collision',
-								function( other_object ){
-									if(other_object == barrier){
-										console.log("hit barrier");
-										//barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
-										var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
-										var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
-										texture.wrapS = THREE.RepeatWrapping;
-										texture.wrapT = THREE.RepeatWrapping;
-										texture.repeat.set( 1,1 );
-										var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture, side:THREE.DoubleSide } );
-										var mesh = new THREE.Mesh( geometry, material, 0 );
-										mesh.translateY(5000);
-										mesh.rotateZ(-Math.PI/2);
-										mesh.rotateY(Math.PI/2);
-										scene.add( mesh );
-									}
-								}
-							)
+						// podRacer.addEventListener( 'collision',
+						// 		function( other_object ){
+						// 			if(other_object == barrier){
+						// 				console.log("hit barrier");
+						// 				//barrier.material.color.setHex((Math.random()*0xFFFFFF<<0));
+						// 				var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
+						// 				var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
+						// 				texture.wrapS = THREE.RepeatWrapping;
+						// 				texture.wrapT = THREE.RepeatWrapping;
+						// 				texture.repeat.set( 1,1 );
+						// 				var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture, side:THREE.DoubleSide } );
+						// 				var mesh = new THREE.Mesh( geometry, material, 0 );
+						// 				mesh.translateY(5000);
+						// 				mesh.rotateZ(-Math.PI/2);
+						// 				mesh.rotateY(Math.PI/2);
+						// 				scene.add( mesh );
+						// 			}
+						// 		}
+						// 	)
 
 						scene.add(podRacer);
 						scene.add(track);
@@ -399,6 +399,23 @@
 				podRacer.__dirtyPosition = true;
 				gameInfo.isOffTrack = true;
 			}
+
+			// if(gameInfo.isOffTrack == true){
+			// 	console.log("is off track!!!!");
+			// 	var geometry = new THREE.BoxGeometry( 1000, 1000, 80 );
+			// 	var texture = new THREE.TextureLoader().load( '/textures/gameover.png' );
+			// 	texture.wrapS = THREE.RepeatWrapping;
+			// 	texture.wrapT = THREE.RepeatWrapping;
+			// 	texture.repeat.set( 1,1 );
+			// 	var material = new THREE.MeshLambertMaterial( { color: 0xffffff, map: texture, side:THREE.DoubleSide } );
+			// 	var mesh = new THREE.Mesh( geometry, material, 0 );
+			// 	mesh.translateY(5000);
+			// 	mesh.rotateZ(-Math.PI/2);
+			// 	mesh.rotateY(Math.PI/2);
+			// 	scene.add( mesh );
+			// 	camera.position.sub(mesh.position).setLength(5000).add(mesh.position);
+
+			// }
 		}
 
 	function animate() {
@@ -406,7 +423,7 @@
 		requestAnimationFrame( animate );
 		updateCheckPoint();
 		updateAvatar();
-		//updateBackgroundObjects();
+		updateBackgroundObjects();
 		checkTrackBoundary();
 		scene.simulate();
 		renderer.render( scene, camera );
@@ -431,7 +448,7 @@
 		var material = new THREE.MeshBasicMaterial( { color: 0xfffff, side: THREE.DoubleSide, map: texture } );
 		barrier = new Physijs.BoxMesh( geometry, material, 0 );
 		barrier.rotation.set(Math.PI/2, 0, Math.PI/2);
-		barrier.position.set(70, 1.5, 0);
+		barrier.position.set(70, 0, 0);
 
 		// barrier.addEventListener( 'collision',
 		// 		function( other_object ){
